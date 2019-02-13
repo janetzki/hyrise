@@ -120,6 +120,7 @@ set(
     optimizer/strategy/strategy_base_test.cpp
     optimizer/strategy/predicate_reordering_test.cpp
     optimizer/strategy/strategy_base_test.hpp
+    plugins/mvcc_delete_plugin_test.cpp
     scheduler/scheduler_test.cpp
     server/mock_connection.hpp
     server/mock_task_runner.hpp
@@ -187,7 +188,7 @@ set(
     utils/plugin_test_utils.hpp
     utils/singleton_test.cpp
     utils/string_utils_test.cpp
-)
+    )
 
 set (
     SYSTEM_TEST_SOURCES
@@ -281,6 +282,7 @@ set(
     gtest
     gmock
     sqlite3
+    MvccDeletePlugin
     ${FILESYSTEM_LIBRARY}
 )
 
@@ -297,8 +299,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Configure hyriseTest
 add_executable(hyriseTest ${HYRISE_UNIT_TEST_SOURCES})
-add_dependencies(hyriseTest TestPlugin TestNonInstantiablePlugin)
-target_link_libraries(hyriseTest hyrise ${LIBRARIES})
+add_dependencies(hyriseTest MvccDeletePlugin TestPlugin TestNonInstantiablePlugin)
+target_link_libraries(hyriseTest hyrise MvccDeletePlugin ${LIBRARIES})
 
 # Configure hyriseSystemTest
 add_executable(hyriseSystemTest ${SYSTEM_TEST_SOURCES})
