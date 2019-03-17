@@ -5,6 +5,8 @@ set(
     testing_assert.hpp
     sql/sqlite_testrunner/sqlite_testrunner.cpp
     sql/sqlite_testrunner/sqlite_testrunner.hpp
+    ../lib/utils/pausable_loop_thread.hpp
+    ../lib/utils/pausable_loop_thread.cpp
 )
 
 set(
@@ -111,14 +113,12 @@ set(
     optimizer/strategy/chunk_pruning_test.cpp
     optimizer/strategy/column_pruning_rule_test.cpp
     optimizer/strategy/exists_reformulation_rule_test.cpp
-    optimizer/strategy/index_scan_rule_test.cpp
-    optimizer/strategy/insert_limit_in_exists_test.cpp
-    optimizer/strategy/join_ordering_rule_test.cpp
     optimizer/strategy/expression_reduction_rule_test.cpp
+    optimizer/strategy/index_scan_rule_test.cpp
+    optimizer/strategy/join_ordering_rule_test.cpp
     optimizer/strategy/predicate_placement_rule_test.cpp
     optimizer/strategy/predicate_split_up_rule_test.cpp
     optimizer/strategy/strategy_base_test.cpp
-    optimizer/strategy/predicate_reordering_test.cpp
     optimizer/strategy/strategy_base_test.hpp
     plugins/mvcc_delete_plugin_test.cpp
     scheduler/scheduler_test.cpp
@@ -163,7 +163,6 @@ set(
     storage/iterables_test.cpp
     storage/materialize_test.cpp
     storage/multi_segment_index_test.cpp
-    storage/numa_placement_test.cpp
     storage/prepared_plan_test.cpp
     storage/reference_segment_test.cpp
     storage/segment_accessor_test.cpp
@@ -182,7 +181,6 @@ set(
     testing_assert.hpp
     utils/format_bytes_test.cpp
     utils/format_duration_test.cpp
-    utils/numa_memory_resource_test.cpp
     utils/plugin_manager_test.cpp
     utils/plugin_test_utils.cpp
     utils/plugin_test_utils.hpp
@@ -198,6 +196,9 @@ set (
     tpc/tpch_test.cpp
     tpc/tpch_db_generator_test.cpp
     gtest_main.cpp
+    utils/plugin_test_utils.cpp
+    utils/plugin_test_utils.hpp
+    plugins/mvcc_delete_plugin_system_test.cpp
 )
 
 if (${ENABLE_JIT_SUPPORT})
@@ -248,9 +249,9 @@ if (${ENABLE_JIT_SUPPORT})
         ${RESOLVE_CONDITION_TEST_MODULE}
         operators/jit_operator_wrapper_test.cpp
         logical_query_plan/jit_aware_lqp_translator_test.cpp
-        operators/jit_operator/jit_hashmap_value_test.cpp
+        operators/jit_operator/jit_hashmap_entry_test.cpp
         operators/jit_operator/jit_operations_test.cpp
-        operators/jit_operator/jit_tuple_value_test.cpp
+        operators/jit_operator/jit_tuple_entry_test.cpp
         operators/jit_operator/jit_variant_vector_test.cpp
         operators/jit_operator/operators/jit_aggregate_test.cpp
         operators/jit_operator/operators/jit_compute_test.cpp
@@ -304,6 +305,7 @@ target_link_libraries(hyriseTest hyrise MvccDeletePlugin ${LIBRARIES})
 
 # Configure hyriseSystemTest
 add_executable(hyriseSystemTest ${SYSTEM_TEST_SOURCES})
-target_link_libraries(hyriseSystemTest hyrise hyriseBenchmarkLib ${LIBRARIES})
+add_dependencies(hyriseSystemTest MvccDeletePlugin)
+target_link_libraries(hyriseSystemTest hyrise MvccDeletePlugin hyriseBenchmarkLib ${LIBRARIES})
 target_link_libraries_system(hyriseSystemTest pqxx)
 target_compile_options(hyriseSystemTest PRIVATE -DPQXX_HIDE_EXP_OPTIONAL)
