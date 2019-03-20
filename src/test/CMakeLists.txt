@@ -15,6 +15,7 @@ set(
     cache/cache_test.cpp
     concurrency/commit_context_test.cpp
     concurrency/transaction_context_test.cpp
+    concurrency/transaction_manager_test.cpp
     cost_model/cost_estimator_test.cpp
     expression/expression_evaluator_to_pos_list_test.cpp
     expression/expression_evaluator_to_values_test.cpp
@@ -58,6 +59,7 @@ set(
     logical_query_plan/union_node_test.cpp
     logical_query_plan/update_node_test.cpp
     logical_query_plan/validate_node_test.cpp
+    memory/numa_memory_resource_test.cpp
     operators/aggregate_test.cpp
     operators/alias_operator_test.cpp
     operators/delete_test.cpp
@@ -95,6 +97,7 @@ set(
     operators/projection_test.cpp
     operators/sort_test.cpp
     operators/table_scan_between_test.cpp
+    operators/table_scan_sorted_segment_search_test.cpp
     operators/table_scan_string_test.cpp
     operators/table_scan_test.cpp
     operators/typed_operator_base_test.hpp
@@ -115,8 +118,10 @@ set(
     optimizer/strategy/exists_reformulation_rule_test.cpp
     optimizer/strategy/expression_reduction_rule_test.cpp
     optimizer/strategy/index_scan_rule_test.cpp
+    optimizer/strategy/insert_limit_in_exists_rule_test.cpp
     optimizer/strategy/join_ordering_rule_test.cpp
     optimizer/strategy/predicate_placement_rule_test.cpp
+    optimizer/strategy/predicate_reordering_rule_test.cpp
     optimizer/strategy/predicate_split_up_rule_test.cpp
     optimizer/strategy/strategy_base_test.cpp
     optimizer/strategy/strategy_base_test.hpp
@@ -161,11 +166,13 @@ set(
     storage/fixed_string_vector_test.cpp
     storage/group_key_index_test.cpp
     storage/iterables_test.cpp
+    storage/lz4_segment_test.cpp
     storage/materialize_test.cpp
     storage/multi_segment_index_test.cpp
     storage/prepared_plan_test.cpp
     storage/reference_segment_test.cpp
     storage/segment_accessor_test.cpp
+    storage/segment_iterators_test.cpp
     storage/simd_bp128_test.cpp
     storage/single_segment_index_test.cpp
     storage/storage_manager_test.cpp
