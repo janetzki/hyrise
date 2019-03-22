@@ -178,6 +178,7 @@ set(
     tasks/chunk_compression_task_test.cpp
     tasks/load_server_file_task_test.cpp
     tasks/operator_task_test.cpp
+    tasks/pipeline_execution_task_test.cpp
     testing_assert.cpp
     testing_assert.hpp
     utils/format_bytes_test.cpp
