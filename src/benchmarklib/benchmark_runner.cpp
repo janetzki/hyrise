@@ -260,8 +260,7 @@ void BenchmarkRunner::_benchmark_individual_queries() {
 
         _schedule_or_execute_query(query_id, pipeline_task, on_query_done);
         tasks.push_back(std::move(pipeline_task));
-      } 
-      else {
+      } else {
         std::this_thread::sleep_for(std::chrono::microseconds(10));
       }
     }
@@ -324,8 +323,9 @@ void BenchmarkRunner::_warmup_query(const QueryID query_id) {
   Assert(currently_running_clients == 0, "All query runs must be finished at this point");
 }
 
-void BenchmarkRunner::_schedule_or_execute_query(
-    const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task, const std::function<void()>& done_callback) {
+void BenchmarkRunner::_schedule_or_execute_query(const QueryID query_id,
+                                                 const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
+                                                 const std::function<void()>& done_callback) {
   if (_config.enable_scheduler) {
     pipeline_task->set_done_callback(done_callback);
     pipeline_task->schedule();
@@ -334,7 +334,8 @@ void BenchmarkRunner::_schedule_or_execute_query(
   }
 }
 
-void BenchmarkRunner::_execute_query(const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
+void BenchmarkRunner::_execute_query(const QueryID query_id,
+                                     const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
                                      const std::function<void()>& done_callback) {
   pipeline_task->execute();
   auto pipeline = pipeline_task->get_sql_pipeline();

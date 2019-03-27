@@ -53,7 +53,8 @@ class BenchmarkRunner {
   void _warmup_query(const QueryID query_id);
 
   // Calls _schedule_query if the scheduler is active, otherwise calls _execute_query and returns no tasks
-  void _schedule_or_execute_query(const QueryID query_id,const std::shared_ptr<PipelineExecutionTask>& pipeline_task, const std::function<void()>& done_callback);
+  void _schedule_or_execute_query(const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
+                                  const std::function<void()>& done_callback);
 
   // Execute named_query
   void _execute_query(const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
