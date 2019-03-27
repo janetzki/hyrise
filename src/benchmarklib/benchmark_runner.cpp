@@ -161,7 +161,6 @@ void BenchmarkRunner::run() {
   }
 }
 
-//TODO(toni)
 void BenchmarkRunner::_benchmark_permuted_query_set() {
   const auto number_of_queries = _query_generator->selected_query_count();
   auto query_ids = _query_generator->selected_queries();
@@ -209,6 +208,7 @@ void BenchmarkRunner::_benchmark_permuted_query_set() {
             result.metrics.push_back(pipeline_task->get_sql_pipeline()->metrics());
             result.num_iterations++;
           }
+          _store_plan(query_id, *(pipeline_task->get_sql_pipeline()));
         };
         _schedule_or_execute_query(query_id, pipeline_task, on_query_done);
         tasks.push_back(std::move(pipeline_task));
@@ -266,6 +266,7 @@ void BenchmarkRunner::_benchmark_individual_queries() {
       }
     }
     state.set_done();
+    _store_plan(query_id, *(std::dynamic_pointer_cast<PipelineExecutionTask>(tasks[0])->get_sql_pipeline()));
     result.duration_ns.store(std::chrono::duration_cast<std::chrono::nanoseconds>(state.benchmark_duration).count());
 
     const auto duration_seconds = static_cast<float>(result.duration_ns) / 1'000'000'000;
@@ -326,23 +327,11 @@ void BenchmarkRunner::_warmup_query(const QueryID query_id) {
 void BenchmarkRunner::_schedule_or_execute_query(
     const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task, const std::function<void()>& done_callback) {
   if (_config.enable_scheduler) {
-    _schedule_query(query_id, pipeline_task, done_callback);
+    pipeline_task->set_done_callback(done_callback);
+    pipeline_task->schedule();
   } else {
     _execute_query(query_id, pipeline_task, done_callback);
   }
-}
-
-void BenchmarkRunner::_schedule_query(
-    const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task, const std::function<void()>& done_callback) {
-
-  pipeline_task->set_done_callback(done_callback);
-  pipeline_task->schedule();
-
-  // TODO(toni): make this work again
-  // If necessary, keep plans for visualization
-  // _store_plan(query_id, *pipeline);
-
-  // return query_tasks;
 }
 
 void BenchmarkRunner::_execute_query(const QueryID query_id, const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
