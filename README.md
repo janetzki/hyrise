@@ -99,6 +99,7 @@ Contact: firstname.lastname@hpi.de
 
 ## Contributors
 
+<<<<<<< HEAD
 -   Yannick   Bäumer
 -   Lawrence  Benson
 -   Timo      Djürken
@@ -135,3 +136,38 @@ Contact: firstname.lastname@hpi.de
 -   Fabian    Wiebe
 -   Tim       Zimmermann
 
+=======
+- Yannick   Bäumer
+- Lawrence  Benson
+- Timo      Djürken
+- Fabian    Dumke
+- Moritz    Eyssen
+- Martin    Fischer
+- Christian Flach
+- Pedro     Flemming
+- Johannes  Frohnhofen
+- Adrian    Holfter
+- Sven      Ihde
+- Michael   Janke
+- Max       Jendruk
+- Marvin    Keller
+- Mirko     Krause
+- Sven      Lehmann
+- Tom       Lichtenstein
+- Jan       Mattfeld
+- Arne      Mayer
+- Torben    Meyer
+- Leander   Neiß
+- Hendrik   Rätz
+- Johannes  Schneider
+- David     Schumann
+- Simon     Siegert
+- Arthur    Silber
+- Daniel    Stolpe
+- Jonathan  Striebel
+- Nils      Thamm
+- Carsten   Walther
+- Lukas     Wenzel
+- Fabian    Wiebe
+- Tim       Zimmermann
+>>>>>>> 706f693
