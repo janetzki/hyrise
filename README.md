@@ -100,6 +100,9 @@ Contact: firstname.lastname@hpi.de
 ## Contributors
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 1bd70be
 -   Yannick   Bäumer
 -   Lawrence  Benson
 -   Timo      Djürken
@@ -115,15 +118,22 @@ Contact: firstname.lastname@hpi.de
 -   Michael   Janke
 -   Max       Jendruk
 -   Marvin    Keller
+<<<<<<< HEAD
 -   Eva       Krebs
 -   Sven      Lehmann
 -   Alexander Löser
+=======
+-   Sven      Lehmann
+>>>>>>> 1bd70be
 -   Jan       Mattfeld
 -   Arne      Mayer
 -   Torben    Meyer
 -   Leander   Neiß
 -   Hendrik   Rätz
+<<<<<<< HEAD
 -   Alexander Riese
+=======
+>>>>>>> 1bd70be
 -   Johannes  Schneider
 -   David     Schumann
 -   Arthur    Silber
@@ -135,6 +145,7 @@ Contact: firstname.lastname@hpi.de
 -   Lukas     Wenzel
 -   Fabian    Wiebe
 -   Tim       Zimmermann
+<<<<<<< HEAD
 
 =======
 - Yannick   Bäumer
@@ -171,3 +182,5 @@ Contact: firstname.lastname@hpi.de
 - Fabian    Wiebe
 - Tim       Zimmermann
 >>>>>>> 706f693
+=======
+>>>>>>> 1bd70be
