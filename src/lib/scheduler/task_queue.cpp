@@ -54,11 +54,4 @@ std::shared_ptr<AbstractTask> TaskQueue::steal() {
   }
   return nullptr;
 }
-
-void TaskQueue::clear() {
-  for (auto& queue : _queues) {
-    queue.clear();
-  }
-}
-
 }  // namespace opossum

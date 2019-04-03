@@ -259,7 +259,7 @@ void BenchmarkRunner::_benchmark_individual_queries() {
         };
 
         _schedule_or_execute_query(query_id, pipeline_task, on_query_done);
-        tasks.push_back(std::move(pipeline_task));
+        tasks.push_back(pipeline_task);
       } else {
         std::this_thread::sleep_for(std::chrono::microseconds(10));
       }
@@ -277,7 +277,10 @@ void BenchmarkRunner::_benchmark_individual_queries() {
     // Wait for the rest of the tasks that didn't make it in time - they will not count toward the results
     // TODO(leander/anyone): To be replaced with something like CurrentScheduler::abort(),
     // that properly removes all remaining tasks from all queues, without having to wait for them
-    CurrentScheduler::abort();
+    for (auto& task : tasks) {
+        CurrentScheduler::wait_for_tasks(std::dynamic_pointer_cast<PipelineExecutionTask>(task)->get_tasks());
+    }
+    Assert(currently_running_clients == 0, "All query runs must be finished at this point");
   }
 }
 

@@ -48,8 +48,6 @@ class TaskQueue {
    */
   std::mutex lock;
 
-  void clear();
-
  private:
   NodeID _node_id;
   std::array<tbb::concurrent_queue<std::shared_ptr<AbstractTask>>, NUM_PRIORITY_LEVELS> _queues;

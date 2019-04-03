@@ -92,8 +92,6 @@ class NodeQueueScheduler : public AbstractScheduler {
 
   void finish() override;
 
-  void abort() override;
-
   bool active() const override;
 
   const std::vector<std::shared_ptr<TaskQueue>>& queues() const override;

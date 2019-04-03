@@ -86,13 +86,13 @@ void AbstractTask::execute() {
     successor->_on_predecessor_done();
   }
 
-  if (_done_callback) _done_callback();
-
   {
     std::lock_guard<std::mutex> lock(_done_mutex);
     _done = true;
   }
   _done_condition_variable.notify_all();
+
+  if (_done_callback) _done_callback();
   DTRACE_PROBE2(HYRISE, JOB_END, _id, reinterpret_cast<uintptr_t>(this));
 }
 

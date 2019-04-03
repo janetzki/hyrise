@@ -84,12 +84,6 @@ void NodeQueueScheduler::finish() {
   _task_counter = 0;
 }
 
-void NodeQueueScheduler::abort() {
-  for (auto& queue : _queues) {
-    queue->clear();
-  }
-}
-
 bool NodeQueueScheduler::active() const { return _active; }
 
 const std::vector<std::shared_ptr<TaskQueue>>& NodeQueueScheduler::queues() const { return _queues; }
