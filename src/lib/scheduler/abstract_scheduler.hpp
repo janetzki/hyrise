@@ -32,6 +32,8 @@ class AbstractScheduler {
    */
   virtual void finish() = 0;
 
+  virtual void abort() = 0;
+
   virtual bool active() const = 0;
 
   virtual const std::vector<std::shared_ptr<TaskQueue>>& queues() const = 0;

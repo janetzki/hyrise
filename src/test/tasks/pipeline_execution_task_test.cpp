@@ -16,7 +16,7 @@ class PipelineExecutionTaskTest : public BaseTest {
   std::shared_ptr<Table> int_float_tbl;
 };
 
-TEST_F(PipelineExecutionTaskTest, ExecuteSimleQuery) {
+TEST_F(PipelineExecutionTaskTest, ExecuteSimpleQuery) {
   const std::string sql = "SELECT a FROM int_float_tbl";
 
   auto sql_pipeline_builder = SQLPipelineBuilder{sql};
@@ -24,7 +24,7 @@ TEST_F(PipelineExecutionTaskTest, ExecuteSimleQuery) {
 
   pipeline_task->execute();
 
-  EXPECT_EQ(pipeline_task->get_sql_pipeline()->failed_pipeline_statement(), nullptr);
+  EXPECT_FALSE(pipeline_task->get_sql_pipeline()->failed_pipeline_statement());
 }
 
 TEST_F(PipelineExecutionTaskTest, ExecuteBadQuery) {

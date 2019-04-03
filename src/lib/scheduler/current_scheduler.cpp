@@ -17,4 +17,6 @@ void CurrentScheduler::set(const std::shared_ptr<AbstractScheduler>& instance) {
 
 bool CurrentScheduler::is_set() { return !!_instance; }
 
+void CurrentScheduler::abort() { _instance->abort(); }
+
 }  // namespace opossum

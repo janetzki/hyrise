@@ -265,7 +265,7 @@ void BenchmarkRunner::_benchmark_individual_queries() {
       }
     }
     state.set_done();
-    _store_plan(query_id, *(std::dynamic_pointer_cast<PipelineExecutionTask>(tasks[0])->get_sql_pipeline()));
+    // _store_plan(query_id, *(std::dynamic_pointer_cast<PipelineExecutionTask>(tasks[0])->get_sql_pipeline()));
     result.duration_ns.store(std::chrono::duration_cast<std::chrono::nanoseconds>(state.benchmark_duration).count());
 
     const auto duration_seconds = static_cast<float>(result.duration_ns) / 1'000'000'000;
@@ -277,8 +277,7 @@ void BenchmarkRunner::_benchmark_individual_queries() {
     // Wait for the rest of the tasks that didn't make it in time - they will not count toward the results
     // TODO(leander/anyone): To be replaced with something like CurrentScheduler::abort(),
     // that properly removes all remaining tasks from all queues, without having to wait for them
-    CurrentScheduler::wait_for_tasks(tasks);
-    Assert(currently_running_clients == 0, "All query runs must be finished at this point");
+    CurrentScheduler::abort();
   }
 }
 
@@ -327,7 +326,7 @@ void BenchmarkRunner::_schedule_or_execute_query(const QueryID query_id,
                                                  const std::shared_ptr<PipelineExecutionTask>& pipeline_task,
                                                  const std::function<void()>& done_callback) {
   if (_config.enable_scheduler) {
-    pipeline_task->set_done_callback(done_callback);
+    pipeline_task->set_query_done_callback(done_callback);
     pipeline_task->schedule();
   } else {
     _execute_query(query_id, pipeline_task, done_callback);

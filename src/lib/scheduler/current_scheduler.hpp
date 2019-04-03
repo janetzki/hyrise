@@ -38,6 +38,11 @@ class CurrentScheduler {
   template <typename TaskType>
   static void schedule_and_wait_for_tasks(const std::vector<std::shared_ptr<TaskType>>& tasks);
 
+  /**
+   * Remove all tasks present in any queue
+   */
+  static void abort();
+
  private:
   static std::shared_ptr<AbstractScheduler> _instance;
 };
