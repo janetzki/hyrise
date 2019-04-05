@@ -55,6 +55,7 @@ class ValueSegmentIterable : public PointAccessibleSegmentIterable<ValueSegmentI
    public:
     using ValueType = T;
     using IterableType = ValueSegmentIterable<T>;
+    static constexpr auto IsTypeErased = false;
     using ValueIterator = typename pmr_concurrent_vector<T>::const_iterator;
 
    public:
@@ -94,6 +95,7 @@ class ValueSegmentIterable : public PointAccessibleSegmentIterable<ValueSegmentI
    public:
     using ValueType = T;
     using IterableType = ValueSegmentIterable<T>;
+    static constexpr auto IsTypeErased = false;
     using ValueIterator = typename pmr_concurrent_vector<T>::const_iterator;
     using NullValueIterator = pmr_concurrent_vector<bool>::const_iterator;
 
@@ -142,6 +144,7 @@ class ValueSegmentIterable : public PointAccessibleSegmentIterable<ValueSegmentI
    public:
     using ValueType = T;
     using IterableType = ValueSegmentIterable<T>;
+    static constexpr auto IsTypeErased = false;
     using ValueVectorIterator = typename pmr_concurrent_vector<T>::const_iterator;
 
    public:
@@ -171,6 +174,7 @@ class ValueSegmentIterable : public PointAccessibleSegmentIterable<ValueSegmentI
    public:
     using ValueType = T;
     using IterableType = ValueSegmentIterable<T>;
+    static constexpr auto IsTypeErased = false;
     using ValueVectorIterator = typename pmr_concurrent_vector<T>::const_iterator;
     using NullValueVectorIterator = typename pmr_concurrent_vector<bool>::const_iterator;
 

@@ -39,6 +39,7 @@ class NullValueVectorIterable : public PointAccessibleSegmentIterable<NullValueV
   class Iterator : public BaseSegmentIterator<Iterator, IsNullSegmentPosition> {
    public:
     using ValueType = bool;
+    static constexpr auto IsTypeErased = false;
     using NullValueIterator = pmr_concurrent_vector<bool>::const_iterator;
 
    public:
@@ -67,6 +68,7 @@ class NullValueVectorIterable : public PointAccessibleSegmentIterable<NullValueV
   class PointAccessIterator : public BasePointAccessSegmentIterator<PointAccessIterator, IsNullSegmentPosition> {
    public:
     using ValueType = bool;
+    static constexpr auto IsTypeErased = false;
     using NullValueVector = pmr_concurrent_vector<bool>;
 
    public:

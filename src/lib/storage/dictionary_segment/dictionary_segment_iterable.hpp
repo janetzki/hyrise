@@ -61,6 +61,7 @@ class DictionarySegmentIterable : public PointAccessibleSegmentIterable<Dictiona
    public:
     using ValueType = T;
     using IterableType = DictionarySegmentIterable<T, Dictionary>;
+    static constexpr auto IsTypeErased = false;
 
     Iterator(DictionaryIteratorType dictionary_begin_it, ValueID null_value_id, ZsIteratorType attribute_it,
              ChunkOffset chunk_offset)
@@ -114,6 +115,7 @@ class DictionarySegmentIterable : public PointAccessibleSegmentIterable<Dictiona
    public:
     using ValueType = T;
     using IterableType = DictionarySegmentIterable<T, Dictionary>;
+    static constexpr auto IsTypeErased = false;
 
     PointAccessIterator(DictionaryIteratorType dictionary_begin_it, const ValueID null_value_id,
                         const std::shared_ptr<ZsDecompressorType>& attribute_decompressor,

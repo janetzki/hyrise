@@ -83,6 +83,7 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
    public:
     using ValueType = T;
     using IterableType = ReferenceSegmentIterable<T>;
+    static constexpr auto IsTypeErased = std::is_same_v<std::decay_t<Accessor>, AbstractSegmentAccessor<T>>;
     using PosListIterator = PosList::const_iterator;
 
    public:
@@ -130,6 +131,7 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
    public:
     using ValueType = T;
     using IterableType = ReferenceSegmentIterable<T>;
+    static constexpr auto IsTypeErased = true;
     using PosListIterator = PosList::const_iterator;
 
    public:
