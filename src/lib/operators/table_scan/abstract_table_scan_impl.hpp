@@ -51,7 +51,7 @@ class AbstractTableScanImpl {
     if constexpr (!decltype(left_it)::IsTypeErased) {
       _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
     } else {
-      std::cout << "found type erased: " << typeid(left_it).name << std::endl;
+      std::cout << "found type erased: " << typeid(left_it).name() << std::endl;
     }
 
     // Do the remainder the easy way. If we did not use the optimization above, left_it was not yet touched, so we
