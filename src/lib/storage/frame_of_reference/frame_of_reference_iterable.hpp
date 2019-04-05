@@ -57,6 +57,7 @@ class FrameOfReferenceIterable : public PointAccessibleSegmentIterable<FrameOfRe
    public:
     using ValueType = T;
     using IterableType = FrameOfReferenceIterable<T>;
+    static constexpr IsTypeErased = false;
     using ReferenceFrameIterator = typename pmr_vector<T>::const_iterator;
     using NullValueIterator = typename pmr_vector<bool>::const_iterator;
 
@@ -137,6 +138,7 @@ class FrameOfReferenceIterable : public PointAccessibleSegmentIterable<FrameOfRe
    public:
     using ValueType = T;
     using IterableType = FrameOfReferenceIterable<T>;
+    static constexpr IsTypeErased = false;
 
     // Begin Iterator
     PointAccessIterator(const pmr_vector<T>* block_minima, const pmr_vector<bool>* null_values,

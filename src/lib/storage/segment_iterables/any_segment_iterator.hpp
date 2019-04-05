@@ -102,6 +102,7 @@ class AnySegmentIterator : public BaseSegmentIterator<AnySegmentIterator<T>, Seg
  public:
   using ValueType = T;
   using IterableType = AnySegmentIterable<T>;
+  static constexpr IsTypeErased = true;
 
   /**
    * Prevents AnySegmentIterator from being created

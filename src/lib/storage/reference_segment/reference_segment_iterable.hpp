@@ -38,6 +38,7 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
         using SegmentType = std::decay_t<decltype(typed_segment)>;
 
         if constexpr (!std::is_same_v<SegmentType, ReferenceSegment>) {
+          // TODO if EraseReferencedSegmentType
           auto accessor = std::static_pointer_cast<AbstractSegmentAccessor<T>>(std::make_shared<SegmentAccessor<T, SegmentType>>(typed_segment));
 
           auto begin = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, begin_it};
@@ -72,6 +73,7 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
    public:
     using ValueType = T;
     using IterableType = ReferenceSegmentIterable<T>;
+    static constexpr IsTypeErased = std::is_same_v<Accessor, AbstractSegmentAccessor<T>>;
     using PosListIterator = PosList::const_iterator;
 
    public:
@@ -119,6 +121,7 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
    public:
     using ValueType = T;
     using IterableType = ReferenceSegmentIterable<T>;
+    static constexpr IsTypeErased = true;
     using PosListIterator = PosList::const_iterator;
 
    public:
