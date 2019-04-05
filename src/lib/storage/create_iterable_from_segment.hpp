@@ -42,12 +42,12 @@ auto create_iterable_from_segment(const DictionarySegment<T>& segment) {
   if constexpr (EraseSegmentType) {
     return create_any_segment_iterable<T>(segment);
   } else {
-#if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_DICTIONARY)
+// #if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_DICTIONARY)
     return DictionarySegmentIterable<T, pmr_vector<T>>{segment};
-#else
-    PerformanceWarning("Dictionary encoding was disabled at compile time. Using slower, type-erased iterators.");
-    return AnySegmentIterable<T>{DictionarySegmentIterable<T, pmr_vector<T>>{segment}};
-#endif
+// #else
+//     PerformanceWarning("Dictionary encoding was disabled at compile time. Using slower, type-erased iterators.");
+//     return AnySegmentIterable<T>{DictionarySegmentIterable<T, pmr_vector<T>>{segment}};
+// #endif
   }
 }
 
@@ -56,12 +56,12 @@ auto create_iterable_from_segment(const RunLengthSegment<T>& segment) {
   if constexpr (EraseSegmentType) {
     return create_any_segment_iterable<T>(segment);
   } else {
-#if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_RUN_LENGTH)
+// #if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_RUN_LENGTH)
     return RunLengthSegmentIterable<T>{segment};
-#else
-    PerformanceWarning("Run-Length encoding was disabled at compile time. Using slower, type-erased iterators.");
-    return AnySegmentIterable<T>{RunLengthSegmentIterable<T>{segment}};
-#endif
+// #else
+//     PerformanceWarning("Run-Length encoding was disabled at compile time. Using slower, type-erased iterators.");
+//     return AnySegmentIterable<T>{RunLengthSegmentIterable<T>{segment}};
+// #endif
   }
 }
 
@@ -70,12 +70,12 @@ auto create_iterable_from_segment(const FixedStringDictionarySegment<T>& segment
   if constexpr (EraseSegmentType) {
     return create_any_segment_iterable<T>(segment);
   } else {
-#if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_FIXED_STRING_DICTIONARY)
+// #if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_FIXED_STRING_DICTIONARY)
     return DictionarySegmentIterable<T, FixedStringVector>{segment};
-#else
-    PerformanceWarning("Fixed-String Dictionary encoding was disabled at compile time. Using slower, type-erased iterators.");
-    return AnySegmentIterable<T>{DictionarySegmentIterable<T, FixedStringVector>{segment}};
-#endif
+// #else
+//     PerformanceWarning("Fixed-String Dictionary encoding was disabled at compile time. Using slower, type-erased iterators.");
+//     return AnySegmentIterable<T>{DictionarySegmentIterable<T, FixedStringVector>{segment}};
+// #endif
   }
 }
 
@@ -84,12 +84,12 @@ auto create_iterable_from_segment(const FrameOfReferenceSegment<T>& segment) {
   if constexpr (EraseSegmentType) {
     return create_any_segment_iterable<T>(segment);
   } else {
-#if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_FRAME_OF_REFERENCE)
+// #if defined(HYRISE_ENCODING_ALL) || defined(HYRISE_ENCODING_FRAME_OF_REFERENCE)
     return FrameOfReferenceIterable<T>{segment};
-#else
-    PerformanceWarning("Frame-of-Refernce encoding was disabled at compile time. Using slower, type-erased iterators.");
-    return AnySegmentIterable<T>{FrameOfReferenceIterable<T>{segment}};
-#endif
+// #else
+//     PerformanceWarning("Frame-of-Refernce encoding was disabled at compile time. Using slower, type-erased iterators.");
+//     return AnySegmentIterable<T>{FrameOfReferenceIterable<T>{segment}};
+// #endif
   }
 }
 

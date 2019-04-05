@@ -49,7 +49,7 @@ class AbstractTableScanImpl {
     // The major part of the table is scanned using SIMD. Only the remainder is handled in this method.
     // For a description of the SIMD code, have a look at the comments in that method.
     // To reduce the compile time, this is disabled in cases where the non-SIMD parts dominate (e.g., when evaluating
-    // regular expressions)
+    // regular expressions).
     if constexpr (UseSimd) {
       _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
     }
