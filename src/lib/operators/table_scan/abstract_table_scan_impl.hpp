@@ -39,7 +39,7 @@ class AbstractTableScanImpl {
     _scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, false_type);
   }
 
-  template <bool CheckForNull, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
+  template <bool CheckForNull, bool UseSimd = true, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
   // This is a function that is critical for our performance. We want the compiler to try its best in optimizing it.
   // Also, we want all functions called inside to be inlined (flattened) and the function itself being always aligned
   // at a page boundary. Finally, it should not be inlined because that might break the alignment.
