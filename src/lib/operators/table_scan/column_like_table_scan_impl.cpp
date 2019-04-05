@@ -52,7 +52,7 @@ void ColumnLikeTableScanImpl::_scan_generic_segment(const BaseSegment& segment, 
     } else {
       _matcher.resolve(_invert_results, [&](const auto& resolved_matcher) {
         const auto functor = [&](const auto& position) { return resolved_matcher(position.value()); };
-        _scan_with_iterators<true>(functor, it, end, chunk_id, matches);
+        _scan_with_iterators<true, false>(functor, it, end, chunk_id, matches);
       });
     }
   });
