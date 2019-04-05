@@ -43,19 +43,19 @@ void ColumnLikeTableScanImpl::_scan_non_reference_segment(const BaseSegment& seg
 void ColumnLikeTableScanImpl::_scan_generic_segment(const BaseSegment& segment, const ChunkID chunk_id,
                                                     PosList& matches,
                                                     const std::shared_ptr<const PosList>& position_filter) const {
-  // segment_with_iterators_filtered(segment, position_filter, [&](auto it, const auto end) {
-  //   using Type = typename decltype(it)::ValueType;
-  //   if constexpr (!std::is_same_v<Type, pmr_string>) {
-  //     // gcc complains without this
-  //     ignore_unused_variable(end);
-  //     Fail("Can only handle strings");
-  //   } else {
-  //     _matcher.resolve(_invert_results, [&](const auto& resolved_matcher) {
-  //       const auto functor = [&](const auto& position) { return resolved_matcher(position.value()); };
-  //       _scan_with_iterators<true, false>(functor, it, end, chunk_id, matches);
-  //     });
-  //   }
-  // });
+  _matcher.resolve(_invert_results, [&](const auto& resolved_matcher) {
+    const auto functor = [&](const auto& position) { return resolved_matcher(position.value()); };
+    segment_with_iterators_filtered(segment, position_filter, [&](auto it, const auto end) {
+      using Type = typename decltype(it)::ValueType;
+      if constexpr (!std::is_same_v<Type, pmr_string>) {
+        // gcc complains without this
+        ignore_unused_variable(end);
+        Fail("Can only handle strings");
+      } else {
+        _scan_with_iterators<true, false>(functor, it, end, chunk_id, matches);
+      }
+    });
+  });
 }
 
 void ColumnLikeTableScanImpl::_scan_dictionary_segment(const BaseDictionarySegment& segment, const ChunkID chunk_id,
