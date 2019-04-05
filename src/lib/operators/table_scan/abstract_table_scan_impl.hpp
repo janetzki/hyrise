@@ -31,15 +31,18 @@ class AbstractTableScanImpl {
    * @{
    */
 
-  template <bool CheckForNull, bool UseSimd = true, typename BinaryFunctor, typename LeftIterator>
+  template <bool CheckForNull, typename BinaryFunctor, typename LeftIterator>
   static void _scan_with_iterators(const BinaryFunctor func, LeftIterator left_it, const LeftIterator left_end,
                                    const ChunkID chunk_id, PosList& matches_out) {
     // Can't use a default argument for this because default arguments are non-type deduced contexts
     auto false_type = std::false_type{};
-    _scan_with_iterators<CheckForNull, UseSimd>(func, left_it, left_end, chunk_id, matches_out, false_type);
+    _scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, false_type);
   }
 
-  template <bool CheckForNull, bool UseSimd = true, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
+  template <typename T>
+  struct whatis;
+
+  template <bool CheckForNull, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
   // This is a function that is critical for our performance. We want the compiler to try its best in optimizing it.
   // Also, we want all functions called inside to be inlined (flattened) and the function itself being always aligned
   // at a page boundary. Finally, it should not be inlined because that might break the alignment.
@@ -48,11 +51,8 @@ class AbstractTableScanImpl {
                        const ChunkID chunk_id, PosList& matches_out, [[maybe_unused]] RightIterator right_it) {
     // The major part of the table is scanned using SIMD. Only the remainder is handled in this method.
     // For a description of the SIMD code, have a look at the comments in that method.
-    // To reduce the compile time, this is disabled in cases where the non-SIMD parts dominate (e.g., when evaluating
-    // regular expressions).
-    if constexpr (UseSimd) {
-      _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
-    }
+    whatis<left_it>{};
+    _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
 
     // Do the remainder the easy way. If we did not use the optimization above, left_it was not yet touched, so we
     // iterate over the entire input data.
