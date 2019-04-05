@@ -39,9 +39,6 @@ class AbstractTableScanImpl {
     _scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, false_type);
   }
 
-  template <typename T>
-  struct whatis;
-
   template <bool CheckForNull, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
   // This is a function that is critical for our performance. We want the compiler to try its best in optimizing it.
   // Also, we want all functions called inside to be inlined (flattened) and the function itself being always aligned
@@ -53,6 +50,8 @@ class AbstractTableScanImpl {
     // For a description of the SIMD code, have a look at the comments in that method.
     if constexpr (!decltype(left_it)::IsTypeErased) {
       _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
+    } else {
+      std::cout << "found type erased: " << typeid(left_it).name << std::endl;
     }
 
     // Do the remainder the easy way. If we did not use the optimization above, left_it was not yet touched, so we
