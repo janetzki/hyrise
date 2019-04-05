@@ -48,7 +48,7 @@ class AbstractTableScanImpl {
                        const ChunkID chunk_id, PosList& matches_out, [[maybe_unused]] RightIterator right_it) {
     // The major part of the table is scanned using SIMD. Only the remainder is handled in this method.
     // For a description of the SIMD code, have a look at the comments in that method.
-    if constexpr (!decltype(left_it)::IsTypeErased) {
+    if constexpr (!decltype(left_it)::IsTypeErased && !std::is_same_v<typename decltype(left_it)::ValueType, pmr_string>) {
       _simd_scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, right_it);
     } else {
       std::cout << "found type erased: " << typeid(left_it).name() << std::endl;
