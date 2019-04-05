@@ -72,7 +72,7 @@ class LZ4Iterable : public PointAccessibleSegmentIterable<LZ4Iterable<T>> {
    public:
     using ValueType = T;
     using IterableType = LZ4Iterable<T>;
-    static constexpr IsTypeErased = false;
+    static constexpr auto IsTypeErased = false;
     using NullValueIterator = typename pmr_vector<bool>::const_iterator;
 
    public:
@@ -128,7 +128,7 @@ class LZ4Iterable : public PointAccessibleSegmentIterable<LZ4Iterable<T>> {
    public:
     using ValueType = T;
     using IterableType = LZ4Iterable<T>;
-    static constexpr IsTypeErased = false;
+    static constexpr auto IsTypeErased = false;
 
     // Begin Iterator
     PointAccessIterator(const std::vector<T>& data, const std::optional<pmr_vector<bool>>* null_values,
