@@ -43,7 +43,9 @@ void ColumnLikeTableScanImpl::_scan_non_reference_segment(const BaseSegment& seg
 void ColumnLikeTableScanImpl::_scan_generic_segment(const BaseSegment& segment, const ChunkID chunk_id,
                                                     PosList& matches,
                                                     const std::shared_ptr<const PosList>& position_filter) const {
-  segment_with_iterators_filtered(segment, position_filter, [&](auto it, const auto end) {
+  // String comparisons and evaluations of regular expressions will dominate the segment access. As those are complex
+  // operations that have a significant impact on the compile time, we erase the segment types here.
+  segment_with_iterators_filtered<ResolveDataTypeTag, EraseTypes::Always>(segment, position_filter, [&](auto it, const auto end) {
     using Type = typename decltype(it)::ValueType;
     if constexpr (!std::is_same_v<Type, pmr_string>) {
       // gcc complains without this
