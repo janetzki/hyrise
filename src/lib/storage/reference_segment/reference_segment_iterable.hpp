@@ -11,7 +11,7 @@
 
 namespace opossum {
 
-template <typename T>
+template <typename T, bool EraseReferencedSegmentType = false>
 class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable<T>> {
  public:
   using ValueType = T;
