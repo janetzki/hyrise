@@ -40,8 +40,8 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
         if constexpr (!std::is_same_v<SegmentType, ReferenceSegment>) {
           auto accessor = std::static_pointer_cast<AbstractSegmentAccessor<T>>(std::make_shared<SegmentAccessor<T, SegmentType>>(typed_segment));
 
-          auto begin = SingleChunkIterator<decltype(accessor)>{accessor, begin_it, begin_it};
-          auto end = SingleChunkIterator<decltype(accessor)>{accessor, begin_it, end_it};
+          auto begin = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, begin_it};
+          auto end = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, end_it};
 
           functor(begin, end);
         } else {
