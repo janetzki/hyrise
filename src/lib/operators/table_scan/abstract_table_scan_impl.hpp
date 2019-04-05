@@ -31,12 +31,12 @@ class AbstractTableScanImpl {
    * @{
    */
 
-  template <bool CheckForNull, typename BinaryFunctor, typename LeftIterator>
+  template <bool CheckForNull, bool UseSimd = true, typename BinaryFunctor, typename LeftIterator>
   static void _scan_with_iterators(const BinaryFunctor func, LeftIterator left_it, const LeftIterator left_end,
                                    const ChunkID chunk_id, PosList& matches_out) {
     // Can't use a default argument for this because default arguments are non-type deduced contexts
     auto false_type = std::false_type{};
-    _scan_with_iterators<CheckForNull>(func, left_it, left_end, chunk_id, matches_out, false_type);
+    _scan_with_iterators<CheckForNull, UseSimd>(func, left_it, left_end, chunk_id, matches_out, false_type);
   }
 
   template <bool CheckForNull, bool UseSimd = true, typename BinaryFunctor, typename LeftIterator, typename RightIterator>
