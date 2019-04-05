@@ -43,61 +43,61 @@ void ColumnLikeTableScanImpl::_scan_non_reference_segment(const BaseSegment& seg
 void ColumnLikeTableScanImpl::_scan_generic_segment(const BaseSegment& segment, const ChunkID chunk_id,
                                                     PosList& matches,
                                                     const std::shared_ptr<const PosList>& position_filter) const {
-  segment_with_iterators_filtered(segment, position_filter, [&](auto it, const auto end) {
-    using Type = typename decltype(it)::ValueType;
-    if constexpr (!std::is_same_v<Type, pmr_string>) {
-      // gcc complains without this
-      ignore_unused_variable(end);
-      Fail("Can only handle strings");
-    } else {
-      _matcher.resolve(_invert_results, [&](const auto& resolved_matcher) {
-        const auto functor = [&](const auto& position) { return resolved_matcher(position.value()); };
-        _scan_with_iterators<true, false>(functor, it, end, chunk_id, matches);
-      });
-    }
-  });
+  // segment_with_iterators_filtered(segment, position_filter, [&](auto it, const auto end) {
+  //   using Type = typename decltype(it)::ValueType;
+  //   if constexpr (!std::is_same_v<Type, pmr_string>) {
+  //     // gcc complains without this
+  //     ignore_unused_variable(end);
+  //     Fail("Can only handle strings");
+  //   } else {
+  //     _matcher.resolve(_invert_results, [&](const auto& resolved_matcher) {
+  //       const auto functor = [&](const auto& position) { return resolved_matcher(position.value()); };
+  //       _scan_with_iterators<true, false>(functor, it, end, chunk_id, matches);
+  //     });
+  //   }
+  // });
 }
 
 void ColumnLikeTableScanImpl::_scan_dictionary_segment(const BaseDictionarySegment& segment, const ChunkID chunk_id,
                                                        PosList& matches,
                                                        const std::shared_ptr<const PosList>& position_filter) const {
-  std::pair<size_t, std::vector<bool>> result;
+  // std::pair<size_t, std::vector<bool>> result;
 
-  if (segment.encoding_type() == EncodingType::Dictionary) {
-    const auto& typed_segment = static_cast<const DictionarySegment<pmr_string>&>(segment);
-    result = _find_matches_in_dictionary(*typed_segment.dictionary());
-  } else {
-    const auto& typed_segment = static_cast<const FixedStringDictionarySegment<pmr_string>&>(segment);
-    result = _find_matches_in_dictionary(*typed_segment.dictionary());
-  }
+  // if (segment.encoding_type() == EncodingType::Dictionary) {
+  //   const auto& typed_segment = static_cast<const DictionarySegment<pmr_string>&>(segment);
+  //   result = _find_matches_in_dictionary(*typed_segment.dictionary());
+  // } else {
+  //   const auto& typed_segment = static_cast<const FixedStringDictionarySegment<pmr_string>&>(segment);
+  //   result = _find_matches_in_dictionary(*typed_segment.dictionary());
+  // }
 
-  const auto& match_count = result.first;
-  const auto& dictionary_matches = result.second;
+  // const auto& match_count = result.first;
+  // const auto& dictionary_matches = result.second;
 
-  auto attribute_vector_iterable = create_iterable_from_attribute_vector(segment);
+  // auto attribute_vector_iterable = create_iterable_from_attribute_vector(segment);
 
-  // LIKE matches all rows, but we still need to check for NULL
-  if (match_count == dictionary_matches.size()) {
-    attribute_vector_iterable.with_iterators(position_filter, [&](auto it, auto end) {
-      static const auto always_true = [](const auto&) { return true; };
-      _scan_with_iterators<true>(always_true, it, end, chunk_id, matches);
-    });
+  // // LIKE matches all rows, but we still need to check for NULL
+  // if (match_count == dictionary_matches.size()) {
+  //   attribute_vector_iterable.with_iterators(position_filter, [&](auto it, auto end) {
+  //     static const auto always_true = [](const auto&) { return true; };
+  //     _scan_with_iterators<true>(always_true, it, end, chunk_id, matches);
+  //   });
 
-    return;
-  }
+  //   return;
+  // }
 
-  // LIKE matches no rows
-  if (match_count == 0u) {
-    return;
-  }
+  // // LIKE matches no rows
+  // if (match_count == 0u) {
+  //   return;
+  // }
 
-  const auto dictionary_lookup = [&dictionary_matches](const auto& position) {
-    return dictionary_matches[position.value()];
-  };
+  // const auto dictionary_lookup = [&dictionary_matches](const auto& position) {
+  //   return dictionary_matches[position.value()];
+  // };
 
-  attribute_vector_iterable.with_iterators(position_filter, [&](auto it, auto end) {
-    _scan_with_iterators<true>(dictionary_lookup, it, end, chunk_id, matches);
-  });
+  // attribute_vector_iterable.with_iterators(position_filter, [&](auto it, auto end) {
+  //   _scan_with_iterators<true>(dictionary_lookup, it, end, chunk_id, matches);
+  // });
 }
 
 std::pair<size_t, std::vector<bool>> ColumnLikeTableScanImpl::_find_matches_in_dictionary(
