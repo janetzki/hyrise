@@ -10,7 +10,7 @@
 namespace opossum {
 
 class ReferenceSegment;
-template <typename T>
+template <typename T, bool>
 class ReferenceSegmentIterable;
 
 /**
