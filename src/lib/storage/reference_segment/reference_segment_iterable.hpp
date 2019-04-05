@@ -11,7 +11,7 @@
 
 namespace opossum {
 
-template <typename T>
+template <typename T, bool EraseReferencedSegmentType = false>
 class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable<T>> {
  public:
   using ValueType = T;
@@ -38,12 +38,23 @@ class ReferenceSegmentIterable : public SegmentIterable<ReferenceSegmentIterable
         using SegmentType = std::decay_t<decltype(typed_segment)>;
 
         if constexpr (!std::is_same_v<SegmentType, ReferenceSegment>) {
-          auto accessor = std::make_shared<SegmentAccessor<T, SegmentType>>(typed_segment);
+          if constexpr (!EraseReferencedSegmentType) {
+            // This code duplication is really ugly, but I can't think of anything better that does not end up being
+            // more complicated
+            auto accessor = std::make_shared<SegmentAccessor<T, SegmentType>>(typed_segment);
 
-          auto begin = SingleChunkIterator<SegmentAccessor<T, SegmentType>>{accessor, begin_it, begin_it};
-          auto end = SingleChunkIterator<SegmentAccessor<T, SegmentType>>{accessor, begin_it, end_it};
+            auto begin = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, begin_it};
+            auto end = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, end_it};
 
-          functor(begin, end);
+            functor(begin, end);
+          } else {
+            auto accessor = std::static_pointer_cast<AbstractSegmentAccessor<T>>(std::make_shared<SegmentAccessor<T, SegmentType>>(typed_segment));
+
+            auto begin = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, begin_it};
+            auto end = SingleChunkIterator<std::decay_t<decltype(*accessor)>>{accessor, begin_it, end_it};
+
+            functor(begin, end);
+          }
         } else {
           Fail("Found ReferenceSegment pointing to ReferenceSegment");
         }
