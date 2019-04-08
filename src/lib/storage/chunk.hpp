@@ -171,7 +171,9 @@ class Chunk : private Noncopyable {
       * have to look at this chunk anymore.
       * The cleanup commit id represents the snapshot commit id at which transactions can ignore this chunk.
       */
-  const std::optional<CommitID>& get_cleanup_commit_id() const { return _cleanup_commit_id; }
+  const std::optional<CommitID>& get_cleanup_commit_id() const {
+    std::shared_lock lock(_mutex_cleanup_commit_id);
+    return _cleanup_commit_id; }
 
   void set_cleanup_commit_id(CommitID cleanup_commit_id);
 
@@ -188,6 +190,7 @@ class Chunk : private Noncopyable {
   std::optional<std::pair<ColumnID, OrderByMode>> _ordered_by;
   mutable std::atomic_uint64_t _invalid_row_count = 0;
   std::optional<CommitID> _cleanup_commit_id;
+  mutable std::shared_mutex _mutex_cleanup_commit_id;
 };
 
 }  // namespace opossum
