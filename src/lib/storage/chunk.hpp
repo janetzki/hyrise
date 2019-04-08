@@ -173,7 +173,8 @@ class Chunk : private Noncopyable {
       */
   const std::optional<CommitID>& get_cleanup_commit_id() const {
     std::shared_lock lock(_mutex_cleanup_commit_id);
-    return _cleanup_commit_id; }
+    return _cleanup_commit_id;
+  }
 
   void set_cleanup_commit_id(CommitID cleanup_commit_id);
 

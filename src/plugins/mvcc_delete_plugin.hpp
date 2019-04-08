@@ -18,7 +18,9 @@ namespace opossum {
 /*
  * One disadvantage of insert only databases like Hyrise is the accumulation of invalidated
  * rows, which have to be removed from the final result for every transaction.
- * This plugin deletes chunks with large numbers of invalidated rows. Thus, it keeps the
+ * This plugin deletes chunks with large numbers of invalidated rows and reinserts them at
+ * the end of the table. These rows are either visible at their original position (for old
+ * transactions) or their new position (for new transactions). Thus, it keeps the
  * execution time per transaction low and the database maintains its original performance.
  * The plugin is split into two main functions. The logical delete is responsible for
  * recognizing chunks with high numbers of invalidated rows and fully invalidates them.
