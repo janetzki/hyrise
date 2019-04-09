@@ -112,59 +112,62 @@ std::shared_ptr<const Table> Insert::_on_execute(std::shared_ptr<TransactionCont
 
   _target_table = StorageManager::get().get_table(_target_table_name);
 
-  // These TypedSegmentProcessors kind of retrieve the template parameter of the segments.
+  // Create TypedSegmentProcessors
   auto typed_segment_processors = std::vector<std::unique_ptr<AbstractTypedSegmentProcessor>>();
   for (const auto& column_type : _target_table->column_data_types()) {
     typed_segment_processors.emplace_back(
         make_unique_by_data_type<AbstractTypedSegmentProcessor, TypedSegmentProcessor>(column_type));
   }
 
-  auto total_rows_to_insert = static_cast<uint32_t>(input_table_left()->row_count());
+  auto total_num_rows_to_insert = input_table_left()->row_count();
+  if (total_num_rows_to_insert == 0) {
+    return nullptr;
+  }
 
-  // First, allocate space for all the rows to insert. Do so while locking the table to prevent multiple threads
-  // modifying the table's size simultaneously.
-  auto start_index = 0u;
-  auto start_chunk_id = ChunkID{0};
-  auto end_chunk_id = 0u;
+  /**
+   * 1. Allocate the required rows before actually writing to them. Do so while locking the table to prevent multiple
+   *    threads modifying the table's size simultaneously.
+   */
+
+  // Range to which values will be written in the second step
+  auto first_row_id = RowID{};
+  auto last_row_id = RowID{};
+
   {
-    auto scoped_lock = _target_table->acquire_append_mutex();
+    const auto append_lock = _target_table->acquire_append_mutex();
 
-    if (_target_table->chunk_count() == 0) {
+    if (_target_table->chunk_count() == 0 || !_target_table->get_chunk(ChunkID{0})->is_mutable()) {
       _target_table->append_mutable_chunk();
     }
 
-    start_chunk_id = _target_table->chunk_count() - 1;
-    end_chunk_id = start_chunk_id + 1;
-    auto last_chunk = _target_table->get_chunk(start_chunk_id);
-    start_index = last_chunk->size();
+    first_row_id.chunk_id = _target_table->chunk_count() - 1;
+    first_row_id.chunk_offset = _target_table->get_chunk(first_row_id.chunk_id)->size();
 
-    // If last chunk is compressed, add a new uncompressed chunk
-    if (!last_chunk->is_mutable()) {
-      _target_table->append_mutable_chunk();
-      end_chunk_id++;
-    }
+    last_row_id = first_row_id;
 
-    auto remaining_rows = total_rows_to_insert;
+    auto remaining_rows = total_num_rows_to_insert;
+
     while (remaining_rows > 0) {
-      auto current_chunk = _target_table->get_chunk(static_cast<ChunkID>(_target_table->chunk_count() - 1));
-      auto rows_to_insert_this_loop = std::min(_target_table->max_chunk_size() - current_chunk->size(), remaining_rows);
+      auto current_chunk = _target_table->get_chunk(last_row_id.chunk_id);
+      auto current_chunk_num_inserted_rows = std::min(_target_table->max_chunk_size() - current_chunk->size(), remaining_rows);
 
       // Resize MVCC vectors.
-      current_chunk->get_scoped_mvcc_data_lock()->grow_by(rows_to_insert_this_loop, MvccData::MAX_COMMIT_ID);
+      current_chunk->get_scoped_mvcc_data_lock()->grow_by(current_chunk_num_inserted_rows, MvccData::MAX_COMMIT_ID);
 
-      // Resize current chunk to full size.
+      // Resize data segments.
       auto old_size = current_chunk->size();
       for (ColumnID column_id{0}; column_id < current_chunk->column_count(); ++column_id) {
         typed_segment_processors[column_id]->resize_vector(current_chunk->get_segment(column_id),
-                                                           old_size + rows_to_insert_this_loop);
+                                                           old_size + current_chunk_num_inserted_rows);
       }
 
-      remaining_rows -= rows_to_insert_this_loop;
+      last_row_id.chun
+
+      remaining_rows -= current_chunk_num_inserted_rows;
 
       // Create new chunk if necessary.
       if (remaining_rows > 0) {
         _target_table->append_mutable_chunk();
-        end_chunk_id++;
       }
     }
   }
@@ -179,16 +182,22 @@ std::shared_ptr<const Table> Insert::_on_execute(std::shared_ptr<TransactionCont
     _mark_as_failed();
   }
 
-  // Then, actually insert the data.
+  /**
+   * 2. Insert the Data into the memory allocated in the first step. Write the transaction_context's transaction_id into
+   *    all allocated rows.
+   */
   auto input_offset = 0u;
   auto source_chunk_id = ChunkID{0};
   auto source_chunk_start_index = 0u;
 
-  for (auto target_chunk_id = start_chunk_id; target_chunk_id < end_chunk_id; target_chunk_id++) {
-    auto target_chunk = _target_table->get_chunk(target_chunk_id);
+  auto num_remaining_rows = total_num_rows_to_insert;
+  auto ch
 
-    const auto current_num_rows_to_insert =
-        std::min(target_chunk->size() - start_index, total_rows_to_insert - input_offset);
+  for (auto chunk_id = first_row_id.chunk_id; chunk_id <= last_row_id.chunk_id; ++chunk_id) {
+    const auto chunk = _target_table->get_chunk(chunk_id);
+
+    const auto chunk_num_rows_to_insert =
+        std::min(chunk->size() - start_index, total_rows_to_insert - input_offset);
 
     auto target_start_index = start_index;
     auto still_to_insert = current_num_rows_to_insert;
