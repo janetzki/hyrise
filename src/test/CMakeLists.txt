@@ -1,4 +1,4 @@
-<<<set(
+set(
     SHARED_SOURCES
     base_test.hpp
     testing_assert.cpp
