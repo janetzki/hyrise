@@ -5,6 +5,8 @@ set(
     testing_assert.hpp
     sql/sqlite_testrunner/sqlite_testrunner.cpp
     sql/sqlite_testrunner/sqlite_testrunner.hpp
+    ../lib/utils/pausable_loop_thread.hpp
+    ../lib/utils/pausable_loop_thread.cpp
 )
 
 set(
@@ -126,6 +128,7 @@ set(
     optimizer/strategy/strategy_base_test.cpp
     optimizer/strategy/strategy_base_test.hpp
     optimizer/strategy/subquery_to_join_rule_test.cpp
+    plugins/mvcc_delete_plugin_test.cpp
     scheduler/scheduler_test.cpp
     server/mock_connection.hpp
     server/mock_task_runner.hpp
@@ -204,6 +207,9 @@ set (
     tpc/tpch_test.cpp
     tpc/tpch_db_generator_test.cpp
     gtest_main.cpp
+    utils/plugin_test_utils.cpp
+    utils/plugin_test_utils.hpp
+    plugins/mvcc_delete_plugin_system_test.cpp
 )
 
 if (${ENABLE_JIT_SUPPORT})
@@ -288,6 +294,7 @@ set(
     gtest
     gmock
     sqlite3
+    MvccDeletePlugin
     ${FILESYSTEM_LIBRARY}
 )
 
@@ -304,11 +311,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Configure hyriseTest
 add_executable(hyriseTest ${HYRISE_UNIT_TEST_SOURCES})
-add_dependencies(hyriseTest TestPlugin TestNonInstantiablePlugin)
-target_link_libraries(hyriseTest hyrise ${LIBRARIES})
+add_dependencies(hyriseTest MvccDeletePlugin TestPlugin TestNonInstantiablePlugin)
+target_link_libraries(hyriseTest hyrise MvccDeletePlugin ${LIBRARIES})
 
 # Configure hyriseSystemTest
 add_executable(hyriseSystemTest ${SYSTEM_TEST_SOURCES})
-target_link_libraries(hyriseSystemTest hyrise hyriseBenchmarkLib ${LIBRARIES})
+add_dependencies(hyriseSystemTest MvccDeletePlugin)
+target_link_libraries(hyriseSystemTest hyrise MvccDeletePlugin hyriseBenchmarkLib ${LIBRARIES})
 target_link_libraries_system(hyriseSystemTest pqxx)
 target_compile_options(hyriseSystemTest PRIVATE -DPQXX_HIDE_EXP_OPTIONAL)
