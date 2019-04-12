@@ -685,11 +685,11 @@ set(SOURCES ${SOURCES} ${PROVIDER_FILE})
 # Configure the regular hyrise library used for tests/server/playground...
 add_library(hyrise STATIC ${SOURCES})
 
-# -force_load/--whole-archive are necessary to include all symbols so that dynamically loaded plugins can use them
+# These flags are necessary to include all symbols so that dynamically loaded plugins can use them
 if (APPLE)
     set_property(TARGET hyrise PROPERTY INTERFACE_LINK_LIBRARIES -force_load $<TARGET_FILE:hyrise>)
 else()
-    set_property(TARGET hyrise PROPERTY INTERFACE_LINK_LIBRARIES -Wl,--whole-archive hyrise -Wl,--no-whole-archive)
+    set_property(TARGET hyrise PROPERTY INTERFACE_LINK_LIBRARIES -Wl,--whole-archive -Wl,--export-dynamic hyrise -Wl,--no-whole-archive -Wl,--no-export-dynamic)
 endif()
 
 
